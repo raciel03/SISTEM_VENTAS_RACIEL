@@ -28,6 +28,7 @@ backups/
 # Cache local de herramientas: se regenera sola, no va al repo
 .firebase/
 supabase/.temp/
+*.tsbuildinfo
 
 # Editor directories and files
 .vscode/*
