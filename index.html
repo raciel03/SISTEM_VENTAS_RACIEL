@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Ventas</title>
+  <meta name="description" content="Sistema de ventas e inventario para el control de stock, caja y comprobantes." />
+  <meta name="theme-color" content="#0f172a" />
+
+  <meta property="og:title" content="Sistema de Ventas" />
+  <meta property="og:description" content="Control de ventas, stock y caja." />
+  <meta property="og:type" content="website" />
+
+  <meta name="twitter:card" content="summary" />
+</head>
+
+<body>
+  <script>
+    (function() {
+      try {
+        var total = 0;
+        for (var i = 0; i < localStorage.length; i++) {
+          total += (localStorage.getItem(localStorage.key(i)) || '').length;
+        }
+        if (total > 3000000) {
+          try { localStorage.removeItem('pos-sales'); } catch(e){}
+          try { localStorage.removeItem('pos-stock-history'); } catch(e){}
+          try { localStorage.removeItem('pos-sales-pending'); } catch(e){}
+          try { localStorage.removeItem('pos-stock-history-pending'); } catch(e){}
+        }
+      } catch(e) {}
+    })();
+  </script>
+  <style>
+    #boot-status {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, Arial, sans-serif;
+      color: #334155;
+      background: #ffffff
+    }
+
+    #boot-status.hidden {
+      display: none
+    }
+
+    #boot-status .box {
+      padding: 16px 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      color: #0f172a
+    }
+
+    #boot-status.error {
+      background: #fff5f5
+    }
+  </style>
+  <div id="boot-status">
+    <div class="box">Cargando aplicación…</div>
+  </div>
+  <div id="root"></div>
+  <script>
+    (function () {
+      function showError(message) {
+        var b = document.getElementById('boot-status');
+        if (b) {
+          b.classList.remove('hidden');
+          b.className = 'error';
+          b.innerHTML = '<div class="box">Error al iniciar: ' + message + '</div>';
+        }
+      }
+      window.addEventListener('error', function (e) {
+        var msg = (e.error && e.error.message) ? e.error.message : (e.message || 'Revisa la consola del navegador');
+        showError(msg);
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        var msg = (e.reason && (e.reason.message || e.reason.toString())) ? (e.reason.message || e.reason.toString()) : 'Promesa rechazada sin capturar';
+        showError(msg);
+      });
+    })();
+  </script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

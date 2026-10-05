@@ -1,0 +1,41 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Secretos: nunca subir
+.env
+.env.*
+*.pem
+*.key
+serviceAccountKey.json
+scripts/_diag*.mjs
+
+# Datos de negocio: jamas subir a GitHub
+backups/
+*_backup_*.json
+*-backup-*.json
+
+# Cache local de herramientas: se regenera sola, no va al repo
+.firebase/
+supabase/.temp/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

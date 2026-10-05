@@ -1,0 +1,55 @@
+# Ref real del proyecto en Supabase. Antes ponia "sistema-de-ventas-supa", que es
+# el alias de Firebase Hosting, no el proyecto de base de datos: con ese valor
+# la CLI se conectaria al sitio equivocado.
+project_id = "yeptjlamcfyjeoqwaxib"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+# La app se sirve desde Firebase Hosting. Sin esta URL, Supabase rechaza el
+# inicio de sesion con "redirect to unlisted URI" cuando se publique.
+site_url = "https://sistema-de-ventas-supa.web.app"
+additional_redirect_urls = [
+  "http://localhost:8080",
+  "http://localhost:8081",
+  "http://127.0.0.1:8080",
+  "https://sistema-de-ventas-supa.firebaseapp.com",
+]
+jwt_expiry = 3600
+enable_signup = true
+enable_anonymous_sign_ins = false
+
+[auth.email]
+# El alta de usuarios la hace el administrador desde el panel, no el empleado.
+# Si se deja abierto, cualquiera que conozca la direccion podria crear su propia
+# cuenta con rol "empleado" y vender.
+enable_signup = false
+double_confirm_changes = true
+enable_confirmations = false
+
+[realtime]
+enabled = true
+
+[functions]
+
+[functions.crear-usuario]
+# La validacion real ocurre DENTRO de la funcion: exige un token de sesion
+# valido y que el perfil sea admin ACTIVO. verify_jwt = false evita que el
+# gateway rechace el preflight CORS del navegador antes de que la funcion
+# responda (que es lo que provocaba "Failed to send a request"), sin perder
+# seguridad: sin token o sin rol admin la funcion responde 401/403 JSON.
+verify_jwt = false
