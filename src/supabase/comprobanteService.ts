@@ -1,4 +1,4 @@
-import { supabase } from './client';
+﻿import { supabase } from './client';
 import { aTexto, aNumeroEstricto, num } from './ids';
 
 /**
@@ -162,3 +162,50 @@ export const anularComprobante = async (id: string): Promise<void> => {
     .eq('id', aNumeroEstricto(id, 'anularComprobante'));
   if (r.error) throw new Error(r.error.message);
 };
+
+
+export const getComprobanteById = async (id: string): Promise<Comprobante | null> => {
+  const filas = exigir(
+    await supabase.from('comprobantes').select(SELECT).eq('id', aNumeroEstricto(id, 'getComprobanteById')),
+    'getComprobanteById'
+  ) as unknown as FilaComprobante[]
+  return filas[0] ? aComprobante(filas[0]) : null
+}
+
+export const updateComprobanteSunat = async (
+  id: string,
+  r: { estado: string; sunatTicket?: string; cdrHash?: string; urlPdf?: string; urlXml?: string; error?: string },
+): Promise<void> => {
+  const fila: Record<string, unknown> = { estado: r.estado }
+  if (r.sunatTicket !== undefined) fila.sunat_ticket = r.sunatTicket
+  if (r.cdrHash !== undefined) fila.cdr_hash = r.cdrHash
+  if (r.urlPdf !== undefined) fila.url_pdf = r.urlPdf
+  if (r.urlXml !== undefined) fila.url_xml = r.urlXml
+  if (r.error !== undefined) fila.error = r.error
+  const { error } = await supabase
+    .from('comprobantes')
+    .update(fila)
+    .eq('id', aNumeroEstricto(id, 'updateComprobanteSunat'))
+  if (error) throw new Error(error.message)
+}
+
+export const subscribeComprobantes = (callback: (c: Comprobante[]) => void): (() => void) => {
+  let vivo = true
+  const cargar = async () => {
+    try {
+      const c = await getAllComprobantes()
+      if (vivo) callback(c)
+    } catch (e) {
+      console.error('[subscribeComprobantes]', e)
+    }
+  }
+  void cargar()
+  const canal = supabase
+    .channel('comprobantes-vivo')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'comprobantes' }, () => void cargar())
+    .subscribe()
+  return () => {
+    vivo = false
+    void supabase.removeChannel(canal)
+  }
+}

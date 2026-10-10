@@ -1,4 +1,4 @@
-import { supabase } from './client';
+﻿import { supabase } from './client';
 import { aTexto, aNumeroEstricto, aTexto as txt } from './ids';
 
 type FilaCliente = {
@@ -117,3 +117,22 @@ export const subscribeClients = (callback: (clientes: Cliente[]) => void): (() =
     void supabase.removeChannel(canal);
   };
 };
+
+
+export interface RucConsultado {
+  ruc: string
+  razonSocial: string
+  nombreComercial?: string
+  direccion?: string
+  estado?: string
+  condicion?: string
+}
+
+export const consultarRuc = async (ruc: string): Promise<RucConsultado> => {
+  const limpio = ruc.replace(/\D/g, '')
+  if (limpio.length !== 11) throw new Error('El RUC debe tener 11 digitos')
+  const { data, error } = await supabase.functions.invoke('consultar-ruc', { body: { ruc: limpio } })
+  if (error) throw new Error(error.message)
+  if (!data?.ok) throw new Error(data?.message ?? 'No se pudo consultar el RUC')
+  return data.data as RucConsultado
+}

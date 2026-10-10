@@ -53,3 +53,7 @@ enabled = true
 # responda (que es lo que provocaba "Failed to send a request"), sin perder
 # seguridad: sin token o sin rol admin la funcion responde 401/403 JSON.
 verify_jwt = false
+
+[functions.consultar-ruc]
+verify_jwt = false
+

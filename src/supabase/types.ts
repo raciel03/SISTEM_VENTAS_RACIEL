@@ -1,4 +1,4 @@
-// Tipos compartidos entre la capa Supabase y la app.
+﻿// Tipos compartidos entre la capa Supabase y la app.
 // Las interfaces replican las de Index.tsx para no obligar a tocar el monolito.
 
 export interface SaleLevel {
@@ -113,3 +113,4 @@ export interface UserProfile {
   displayName: string;
   role: 'admin' | 'empleado';
 }
+
